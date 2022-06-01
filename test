@@ -1,0 +1,1 @@
+./detect-camera-demo 'rtsp://admin:ddd123654@192.168.1.87:554/onvif1'

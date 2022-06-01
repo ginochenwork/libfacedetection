@@ -75,6 +75,17 @@ int main(int argc, char* argv[])
             return 0;
         }
     }
+    else {
+        cap.open(argv[1]);
+        if(! cap.isOpened()) {
+            cerr << "Cannot open the camera." << endl;
+            return 0;
+        }
+    }
+
+    int count = 0;
+    int step = 10;
+    int rem = 0;
 
     if( cap.isOpened())
     {
@@ -90,14 +101,16 @@ int main(int argc, char* argv[])
             //////////////////////////////////////////
             //!!! The input image must be a BGR one (three-channel) instead of RGB
             //!!! DO NOT RELEASE pResults !!!
-            TickMeter cvtm;
-            cvtm.start();
+            if (count % step == rem) {
+                TickMeter cvtm;
+                cvtm.start();
 
-            pResults = facedetect_cnn(pBuffer, (unsigned char*)(image.ptr(0)), image.cols, image.rows, (int)image.step);
-            
-            cvtm.stop();    
-            printf("time = %gms\n", cvtm.getTimeMilli());
-            
+                pResults = facedetect_cnn(pBuffer, (unsigned char*)(image.ptr(0)), image.cols, image.rows, (int)image.step);
+                
+                cvtm.stop();    
+                printf("time = %gms\n", cvtm.getTimeMilli());
+            }
+
             printf("%d faces detected.\n", (pResults ? *pResults : 0));
             Mat result_image = image.clone();
             //print the detection results
@@ -134,6 +147,7 @@ int main(int argc, char* argv[])
             
             if((cv::waitKey(2)& 0xFF) == 'q')
                 break;
+            ++count;
         }
     }
    
